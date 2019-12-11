@@ -1,6 +1,6 @@
 # qmcToMp3Android
 
-针对腾讯音乐的SQ加密音乐做的一个转换为Mp3的安卓客户端,代码根据 [qmcflactomp3](https://github.com/OnlyPiglet/qmcflactomp3) 开源项目修改的
+QQ音乐下载的加密音乐转换为Mp3的安卓客户端,代码根据 [qmcflactomp3](https://github.com/OnlyPiglet/qmcflactomp3) 开源项目修改的
 
 兼容安卓5.0 - 安卓9.0
 
