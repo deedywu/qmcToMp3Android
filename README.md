@@ -4,10 +4,7 @@
 
 兼容安卓5.0 - 安卓9.0
 
-运行环境:
-1.jdk>1.7
-2.sdk>21
-3.Android studio
+apk下载地址:https://pan.baidu.com/s/1UseySwLt-3pknpLsLeM33A 提取码:n3p4
 
 运行方式:
 1.导出apk安装到手机
