@@ -4,8 +4,9 @@ QQ音乐下载的加密音乐转换为Mp3的安卓客户端,代码根据 [qmcfla
 
 兼容安卓5.0 - 安卓9.0
 
-[apk下载地址](https://pan.baidu.com/s/1UseySwLt-3pknpLsLeM33A) 
-提取码:n3p4
+也提供apk直接下载
+[apk下载地址](https://pan.baidu.com/s/1AhJhbmAW80_qfvEvY-Kijg) 
+提取码:x3me
 
 运行方式:
 1.导出apk安装到手机
