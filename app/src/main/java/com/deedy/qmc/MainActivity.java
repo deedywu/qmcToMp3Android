@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Permission.isGrantExternalRW(this, 1);
         setContentView(R.layout.activity_main);
         b1 = findViewById(R.id.b1);
-//        pd = new ProgressDialog(this);
+        pd = new ProgressDialog(this);
         CatchException mException = CatchException.getInstance();
         Context context = getApplicationContext();
         mException.init(context);  //注册
@@ -87,53 +87,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/qqmusic/song";
         File MDir = new File(dir);
         if (MDir.exists() && MDir.isDirectory()) {
-            b1.setEnabled(false);
-            b1.setText("正在转换...");
             File[] files = MDir.listFiles();
             if (files != null) {
                 Util.addFile(files);
             }
             FileQueue.setMax();
-            pd.setTitle("请稍等");
-            //设置对话进度条样式为水平
-            pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            //设置提示信息
-            pd.setMessage("正在玩命转换中......");
-            pd.setCancelable(false);//点击屏幕和按返回键都不能取消加载框
-            //设置对话进度条显示在屏幕顶部（方便截图）
-            pd.getWindow().setGravity(Gravity.CENTER);
-            pd.show();//调用show方法显示进度条对话框
-            String saveLog = "任务开始,有" + FileQueue.getMax() + "个文件待执行,请不要退出程序";
-            Util.writeLog("正在转换", saveLog);
-            Toast.makeText(MainActivity.getInstance(), saveLog, Toast.LENGTH_SHORT).show();
-            final Thread thread = new Thread() {
-                @Override
-                public void run() {
-                    final CountDownLatch latch = new CountDownLatch(4);
-                    Looper.prepare();
-                    Long start = System.currentTimeMillis();
-                    for (int i = 0; i < 4; i++) {
-                        new Thread(new ThreadRun(latch)).start();
+            if (FileQueue.getMax() > 0) {
+                b1.setEnabled(false);
+                b1.setText("正在转换...");
+                pd.setTitle("请稍等");
+                //设置对话进度条样式为水平
+                pd.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                //设置提示信息
+                pd.setMessage("正在玩命转换中......");
+                pd.setCancelable(false);//点击屏幕和按返回键都不能取消加载框
+                //设置对话进度条显示在屏幕顶部（方便截图）
+                pd.getWindow().setGravity(Gravity.CENTER);
+                pd.show();//调用show方法显示进度条对话框
+                String saveLog = "任务开始,有" + FileQueue.getMax() + "个文件待执行,请不要退出程序";
+                Util.writeLog("正在转换", saveLog);
+                Toast.makeText(MainActivity.getInstance(), saveLog, Toast.LENGTH_SHORT).show();
+                final Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        final CountDownLatch latch = new CountDownLatch(4);
+                        Looper.prepare();
+                        Long start = System.currentTimeMillis();
+                        for (int i = 0; i < 4; i++) {
+                            new Thread(new ThreadRun(latch)).start();
+                        }
+                        try {
+                            latch.await();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } finally {
+                            Long end = System.currentTimeMillis();
+                            Message msg = handler.obtainMessage();
+                            msg.what = 2;
+                            msg.arg2 = 2;
+                            handler.sendMessage(msg);
+                            String saveLog = "成功转换" + FileQueue.getMax() + "个文件,共耗费" + Util.getTimeStr(end - start);
+                            Util.writeLog("转换成功", saveLog);
+                            Toast.makeText(MainActivity.getInstance(), saveLog, Toast.LENGTH_SHORT).show();
+                            FileQueue.reset();
+                        }
+                        Looper.loop();
                     }
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Long end = System.currentTimeMillis();
-                        Message msg = handler.obtainMessage();
-                        msg.what = 2;
-                        msg.arg2 = 2;
-                        handler.sendMessage(msg);
-                        String saveLog = "成功转换" + FileQueue.getMax() + "个文件,共耗费" + Util.getTimeStr(end - start);
-                        Util.writeLog("转换成功", saveLog);
-                        Toast.makeText(MainActivity.getInstance(), saveLog, Toast.LENGTH_SHORT).show();
-                        FileQueue.reset();
-                    }
-                    Looper.loop();
-                }
-            };
-            thread.start();
+                };
+                thread.start();
+            } else {
+                Toast.makeText(MainActivity.getInstance(), "没有找到需要转换的文件", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(MainActivity.getInstance(), "qqmusic/song文件夹不存在", Toast.LENGTH_SHORT).show();
         }
